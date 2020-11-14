@@ -1,9 +1,9 @@
-import re
-import pandas as pd 
-import matplotlib.pylab as plt
 from wordcloud import wordcloud
 from wordcloud.wordcloud import WordCloud
 from collections import Counter
+import matplotlib.pylab as plt
+import pandas as pd 
+import re
 
 # Define project path
 PROJ_PATH = "/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/James_IdeaTesting/TwitterVisualiser/"
