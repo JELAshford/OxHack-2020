@@ -1,4 +1,5 @@
 from textblob import TextBlob
+from textblob.sentiments import NaiveBayesAnalyzer
 import pandas as pd
 import sys, re
 import tweepy
@@ -38,9 +39,15 @@ for tweet in public_tweets:
     # Replace special characters
     twt = re.sub("['`…’.£#\*\"@!?]", "", twt)
 
-    analysis = TextBlob(twt)
-    pol = analysis.sentiment.polarity
-    subj = analysis.sentiment.subjectivity
+    # Polarity/Subj Analysis
+    ps_analysis = TextBlob(twt)
+    pol = ps_analysis.sentiment.polarity
+    subj = ps_analysis.sentiment.subjectivity
+
+    # # Pos/Neg Analysis
+    # pn_analysis = TextBlob(twt, analyzer=NaiveBayesAnalyzer())
+    # pos = pn_analysis.sentiment.p_pos
+    # neg = pn_analysis.sentiment.p_neg
 
     tweet_summary = (twt, pol, subj)
     tweet_data.append(tweet_summary)
