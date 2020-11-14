@@ -10,7 +10,7 @@ PROJ_PATH = "/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/
 PLOT = False
 
 # Read in tweets
-search_term = 'Climate Change'
+search_term = 'Trump'
 tweet_file = pd.read_csv(f"{PROJ_PATH}rsc/{search_term}_tweets.csv")
 tweets = tweet_file["Tweet"].dropna().values
 
@@ -21,7 +21,8 @@ words = [w for w in all_words if len(w) > 4]
 tweet_str = " ".join(words)
 
 # Create word-cloud
-word_cloud = WordCloud(mode="RGBA", background_color=None, 
+word_cloud = WordCloud(font_path=f"{PROJ_PATH}rsc/swiss_911_ultra_compressed_bt.ttf",
+                        mode="RGBA", background_color=None, colormap="Blues", 
                         width=1000, height=1000, max_words=2000)
 word_cloud.generate(tweet_str)
 # Save
@@ -37,6 +38,6 @@ if PLOT:
 
 
 # Get counts of each word
-counts = dict(Counter(words))
-ord_counts = dict(sorted(counts.items(), key=lambda item: item[1], reverse=True))
-print(ord_counts)
+# counts = dict(Counter(words))
+# ord_counts = dict(sorted(counts.items(), key=lambda item: item[1], reverse=True))
+# print(ord_counts)

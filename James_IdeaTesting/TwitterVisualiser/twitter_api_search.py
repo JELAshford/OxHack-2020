@@ -20,7 +20,7 @@ auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
 # Make public search
-search_term = 'Climate Change'
+search_term = 'Trump'
 public_tweets = api.search(search_term, count=100, result_type='recent')
 
 # Generate list of tuples: (tweet, polarity, subjectivity)
@@ -37,7 +37,7 @@ for tweet in public_tweets:
     # Replace newlines and underscores
     twt = re.sub("[(\\n)(_)(-)(\/)]", " ", twt)
     # Replace special characters
-    twt = re.sub("['`…’.£#\*\"@!?]", "", twt)
+    twt = re.sub("['`…’.£#\*\"\@\!\?]", "", twt)
 
     # Polarity/Subj Analysis
     ps_analysis = TextBlob(twt)
@@ -52,7 +52,7 @@ for tweet in public_tweets:
     tweet_summary = (twt, pol, subj)
     tweet_data.append(tweet_summary)
 
-print(len(tweet_data))
+print(f"Get {len(tweet_data)} tweets on '{search_term}'")
 # Convert to pandas dataframe and save
 rsc_path = "/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/James_IdeaTesting/TwitterVisualiser/rsc"
 save_path = f"{rsc_path}/{search_term}_tweets.csv"
