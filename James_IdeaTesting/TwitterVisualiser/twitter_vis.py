@@ -7,6 +7,7 @@ from collections import Counter
 
 # Define project path
 PROJ_PATH = "/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/James_IdeaTesting/TwitterVisualiser/"
+PLOT = False
 
 # Read in tweets
 search_term = 'Climate Change'
@@ -28,14 +29,14 @@ save_name = f"{PROJ_PATH}output/{search_term}_wordcloud.png"
 word_cloud.to_file(save_name)
 
 # Show in matplotlib
-plt.figure(figsize=(15, 10))
-plt.imshow(word_cloud) #, interpolation='bilinear')
-plt.axis('off')
-plt.show()
+if PLOT:
+    plt.figure(figsize=(15, 10))
+    plt.imshow(word_cloud) #, interpolation='bilinear')
+    plt.axis('off')
+    plt.show()
 
 
 # Get counts of each word
-print(words)
 counts = dict(Counter(words))
 ord_counts = dict(sorted(counts.items(), key=lambda item: item[1], reverse=True))
-print(counts)
+print(ord_counts)
