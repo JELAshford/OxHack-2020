@@ -18,7 +18,9 @@ class Region:
         else:
             return False
 
-RSC_PATH = "/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/Interface/rsc"
+INTERFACE_PATH = "/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/Interface"
+RSC_PATH = f"{INTERFACE_PATH}/rsc"
+OUTPUT_PATH = f"{INTERFACE_PATH}/output"
 WIDTH, HEIGHT = 1440, 898
 global ACTIVE_WORD
 ACTIVE_WORD = "ENTER QUERY"
@@ -38,7 +40,7 @@ search_word = pyglet.text.Label(ACTIVE_WORD,
                           x=860, y=620, width=580, height=270,
                           anchor_x='left', anchor_y='bottom')
 
-main_display = pyglet.image.load()
+main_display = pyglet.image.load(f"{OUTPUT_PATH}/")
 
 @window.event
 def on_draw():
