@@ -2,6 +2,7 @@ from nltk.corpus import stopwords
 
 import matplotlib.pylab as plt
 import matplotlib.font_manager as font_manager
+import matplotlib.dates as mdates
 
 from wordcloud import wordcloud
 from wordcloud.wordcloud import WordCloud
@@ -70,8 +71,9 @@ def generate_csv(keyword, save_path):
             ps_analysis = TextBlob(twt)
             pol = ps_analysis.sentiment.polarity
             subj = ps_analysis.sentiment.subjectivity
+            time = str(tweet.created_at).split(" ")[0]
 
-            tweet_summary = (twt, pol, subj)
+            tweet_summary = (twt, pol, subj, time)
             tweet_data.append(tweet_summary)
         
         #Update the date
@@ -87,7 +89,7 @@ def generate_csv(keyword, save_path):
     # Convert to pandas dataframe and save
     file_path = f"{save_path}/{keyword}_tweets.csv"
     saved_tweets = pd.DataFrame(tweet_data)
-    saved_tweets.columns = ["Tweet", "Polarity", "Subjectivity"]
+    saved_tweets.columns = ["Tweet", "Polarity", "Subjectivity", "Time"]
     saved_tweets.to_csv(file_path, header=True, index=False)
 
     return saved_tweets
@@ -235,6 +237,52 @@ def cooc_graph(search_term, tweets_dataframe, save_path, NUM_OF_COOCS=5):
     plt.savefig(file_name, transparent=True)
 
 
+def ps_graph(search_term, tweets_dataframe, save_path):
+
+    # Sort out fonts
+    font_files = font_manager.findSystemFonts(fontpaths="/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/Interface/rsc")
+    font_list = font_manager.createFontList(font_files)
+    font_manager.fontManager.ttflist.extend(font_list)
+    from matplotlib import rcParams
+    rcParams['font.family'] = "Swiss911 UCm BT"
+    rcParams['font.size'] = 18
+    
+    # Extract data from tweets_dataframe
+    pols = tweets_dataframe["Polarity"].values
+    subjs = tweets_dataframe["Subjectivity"].values
+    times = tweets_dataframe["Time"].values
+
+    # Convert times to mdates datetimes
+    tweet_datetimes = [mdates.date2num(datetime.datetime.strptime(t, "%Y-%m-%d")) for t in times]
+
+    # Scatterplot coloured by datetime
+    fig = plt.figure(figsize=(5, 3), dpi=200)
+    ax = fig.add_subplot(111)
+    sc = ax.scatter(pols, subjs, c=tweet_datetimes)
+
+    # Create colourbar with autoformatted mdates
+    loc = mdates.AutoDateLocator()
+    cbar = fig.colorbar(sc, ticks=loc, format=mdates.AutoDateFormatter(loc))
+
+    # Make all the axes white for viewing
+    ax.tick_params(axis='x', colors="white")
+    ax.tick_params(axis='y', colors="white")
+    ax.set_xlabel("Polarity", color='white')
+    ax.set_ylabel("Subjectivity", color='white')
+    ax.spines['top'].set_edgecolor('white')
+    ax.spines['bottom'].set_edgecolor('white')
+    ax.spines['left'].set_edgecolor('white')
+    ax.spines['right'].set_edgecolor('white')
+    cbar.ax.tick_params(axis='y', colors='white')
+    [t.set_color('white') for t in cbar.ax.xaxis.get_ticklabels()]
+    [t.set_color('white') for t in cbar.ax.yaxis.get_ticklabels()]
+
+    # Save
+    file_name = f"{save_path}/{search_term}_psplot.png"
+    plt.savefig(file_name, transparent=True, pad_inches=0, bbox_inches='tight')
+
+    return True
+
 def generate_plots(keyword, save_path = "/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/Interface/output"):
 
     # Generate .csv of tweet data from keyword
@@ -243,5 +291,8 @@ def generate_plots(keyword, save_path = "/Users/jamesashford/Documents/Projects/
     # Draw the wordcloud
     wordcloud_plot(keyword, tweet_df, save_path)
 
-    # Draw the graph
+    # Draw the Cooc graph
     cooc_graph(keyword, tweet_df, save_path)
+
+    # Draw the PS Graph
+    ps_graph(keyword, tweet_df, save_path)
