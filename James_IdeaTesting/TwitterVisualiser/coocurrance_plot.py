@@ -36,7 +36,7 @@ tweets = tweet_file["Tweet"].dropna().values
 # Extract and clean words
 all_words = TextBlob(" ".join(tweets).upper()).words.singularize().lemmatize()
 # Get stop-words
-stop_words = list(set(stopwords.words('english')))
+stop_words = list(set(stopwords.words('english'))) + ['thi']
 # Remove Stop and Short Words
 words = [w for w in all_words if len(w) > 2 and w.lower() not in stop_words]
 
@@ -49,26 +49,29 @@ dtm = np.array([[1 if (tweet.upper().count(word) > 0) else 0 for word in key_wor
 # Co-occurrances
 cooc = np.dot(dtm.T, dtm)
 
-# Statistical significance of search_term
-search_term_dice_stats = dice_significance(cooc, search_term, key_words)
-search_term_dice_stats = dict_value_sort(search_term_dice_stats)
+graph_data = []
+for term in TextBlob(search_term).words:
 
-# Get NUM_OF_COOCS most similar words
-most_similar = list(search_term_dice_stats.keys())[0:NUM_OF_COOCS]
+    # Statistical significance of search_term
+    term_dice_stats = dice_significance(cooc, term, key_words)
+    term_dice_stats = dict_value_sort(term_dice_stats)
 
-# Create a structure to hold the node links
-graph_data = [{"from":search_term.upper(), "to":set_name, "stat":search_term_dice_stats[set_name]} for set_name in most_similar]
+    # Get NUM_OF_COOCS most similar words
+    most_similar = list(term_dice_stats.keys())[0:NUM_OF_COOCS]
 
-# Iterate over each of the choseon coocs, and find their closest
-for word in most_similar:
-    # Find stats for this word
-    word_dice_stats = dice_significance(cooc, word, key_words)
-    word_dice_stats = dict_value_sort(word_dice_stats)
-    # Choose top 20 nearby matches
-    top_neighbours = list(word_dice_stats.keys())[0:10]
-    new_graph_data = [{"from":word.upper(), "to":set_name, "stat":word_dice_stats[set_name]} for set_name in top_neighbours]
-    # Add to existing graph data
-    graph_data += new_graph_data
+    # Create a structure to hold the node links
+    graph_data += [{"from":term.upper(), "to":set_name, "stat":term_dice_stats[set_name]} for set_name in most_similar]
+
+    # Iterate over each of the choseon coocs, and find their closest
+    for word in most_similar:
+        # Find stats for this word
+        word_dice_stats = dice_significance(cooc, word, key_words)
+        word_dice_stats = dict_value_sort(word_dice_stats)
+        # Choose top 20 nearby matches
+        top_neighbours = list(word_dice_stats.keys())[0:10]
+        new_graph_data = [{"from":word.upper(), "to":set_name, "stat":word_dice_stats[set_name]} for set_name in top_neighbours]
+        # Add to existing graph data
+        graph_data += new_graph_data
 
 # Convert graph data to pandas dataframe
 gd = pd.DataFrame.from_dict(graph_data)
@@ -77,7 +80,6 @@ gd = pd.DataFrame.from_dict(graph_data)
 # G = nx.from_numpy_matrix(cooc)
 G = nx.from_pandas_edgelist(gd, "from", "to", "stat")
 # pos = nx.spring_layout(G, k=0.42, iterations=17)
-# pos = nx.kamada_kawai_layout(G)
 
 # Visualisation
 fig = plt.figure()

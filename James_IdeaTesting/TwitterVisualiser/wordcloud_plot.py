@@ -1,5 +1,7 @@
+from nltk.corpus import stopwords
 from wordcloud import wordcloud
 from wordcloud.wordcloud import WordCloud
+from textblob import TextBlob
 from collections import Counter
 import matplotlib.pylab as plt
 import pandas as pd 
@@ -10,13 +12,17 @@ PROJ_PATH = "/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/
 PLOT = False
 
 # Read in tweets
-search_term = 'Trump'
+search_term = 'Climate Change'
 tweet_file = pd.read_csv(f"{PROJ_PATH}rsc/{search_term}_tweets.csv")
 tweets = tweet_file["Tweet"].dropna().values
 
-# Remove short words 
-all_words = " ".join(tweets).upper().split(" ")
-words = [w for w in all_words if len(w) > 4]
+# Extract and clean words
+all_words = TextBlob(" ".join(tweets).upper()).words.singularize().lemmatize()
+# Get stop-words
+stop_words = list(set(stopwords.words('english'))) + ['thi']
+# Remove Stop and Short Words
+words = [w for w in all_words if len(w) > 2 and w.lower() not in stop_words]
+
 # Convert into one long string
 tweet_str = " ".join(words)
 
