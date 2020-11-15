@@ -15,6 +15,7 @@ import tweepy
 
 from collections import Counter
 import sys, re
+import datetime
 
 import networkx as nx
 
@@ -40,31 +41,49 @@ def generate_csv(keyword, save_path):
 
     # Generate list of tuples: (tweet, polarity, subjectivity)
     tweet_data = []
-    for tweet in public_tweets:
-        # Remove emoji from text
-        twt = tweet.text.translate(emoji_begone)
-        # Filter out links
-        twt = re.sub(r"http\S+", "", twt)
-        # Remove RT prefix
-        twt = re.sub("(RT\s@.*:\s)", "", twt).strip()
-        # Remove twitter handles
-        twt = re.sub("(@.*\s)", "", twt)
-        # Correct ampersand
-        twt = re.sub("(&amp;)", "&", twt)
-        # Replace newlines and underscores
-        twt = re.sub("[(\\n)(_)(-)(\/)]", " ", twt)
-        # Replace special characters
-        twt = re.sub("['`…’.£#\*\"\@\!\?]", "", twt)
+    # Set the initial date and iterate thorugh the tweets for the past 7 days
+    day_num = 1
+    update_date = datetime.datetime.now() + datetime.timedelta(days=1)
+    until_date = str(update_date).split(" ")[0]
+    while day_num <= 7:
 
-        # Polarity/Subj Analysis
-        ps_analysis = TextBlob(twt)
-        pol = ps_analysis.sentiment.polarity
-        subj = ps_analysis.sentiment.subjectivity
+        # Search the api for this keyword up until here
+        public_tweets = api.search(keyword, count=100, result_type='recent',until=until_date)
+        
+        for tweet in public_tweets:
+            # Remove emoji from text
+            twt = tweet.text.translate(emoji_begone)
+            # Filter out links
+            twt = re.sub(r"http\S+", "", twt)
+            # Remove RT prefix
+            twt = re.sub("(RT\s@.*:\s)", "", twt).strip()
+            # Remove twitter handles
+            twt = re.sub("(@.*\s)", "", twt)
+            # Correct ampersand
+            twt = re.sub("(&amp;)", "&", twt)
+            # Replace newlines and underscores
+            twt = re.sub("[(\\n)(_)(-)(\/)]", " ", twt)
+            # Replace special characters
+            twt = re.sub("['`…’.£#\*\"\@\!\?]", "", twt)
 
-        tweet_summary = (twt, pol, subj)
-        tweet_data.append(tweet_summary)
+            # Polarity/Subj Analysis
+            ps_analysis = TextBlob(twt)
+            pol = ps_analysis.sentiment.polarity
+            subj = ps_analysis.sentiment.subjectivity
 
-    print(f"Get {len(tweet_data)} tweets on '{keyword}'")
+            tweet_summary = (twt, pol, subj)
+            tweet_data.append(tweet_summary)
+        
+        #Update the date
+        update_date = update_date-datetime.timedelta(days=1)
+        until_date = str(update_date).split(" ")[0]
+        day_num += 1
+    
+    # Keep only unique results
+    print(f"Got {len(tweet_data)} tweets overall on '{keyword}'")
+    tweet_data = list(set(tweet_data))
+    print(f"Got {len(tweet_data)} unique tweets on '{keyword}'")
+
     # Convert to pandas dataframe and save
     file_path = f"{save_path}/{keyword}_tweets.csv"
     saved_tweets = pd.DataFrame(tweet_data)
@@ -79,7 +98,7 @@ def wordcloud_plot(search_term, tweets_dataframe, save_path):
     tweets = tweets_dataframe["Tweet"].dropna().values
 
     # Extract and clean words
-    all_words = TextBlob(" ".join(tweets).upper()).words.singularize().lemmatize()
+    all_words = TextBlob(" ".join(tweets).upper()).words.lemmatize()
     # Get stop-words
     stop_words = list(set(stopwords.words('english'))) + ['thi']
     # Remove Stop and Short Words
@@ -181,11 +200,11 @@ def cooc_graph(search_term, tweets_dataframe, save_path, NUM_OF_COOCS=5):
     for node in G:
         if node in ALL_SEARCH_TERMS.upper():
             col = 'darkblue' #'red'
-            size = counts[node]*100 #5000
+            size = min(counts[node]*100, 5000) #5000
             l0[node] = node
         elif node in layer1_names:
             col = 'lightblue' #'orange'
-            size = counts[node]*100 #2500
+            size = min(counts[node]*100, 3000) #2500
             l1[node] = node
         else:
             col = 'cyan' #'blue'
