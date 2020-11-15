@@ -91,7 +91,7 @@ def wordcloud_plot(search_term, tweets_dataframe, save_path):
     # Create word-cloud
     word_cloud = WordCloud(font_path="/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/Interface/rsc/swiss_911_ultra_compressed_bt.ttf",
                             mode="RGBA", background_color=None, colormap="Blues", 
-                            width=1000, height=1000, max_words=2000)
+                            width=1000, height=630, max_words=2000)
     word_cloud.generate(tweet_str)
     # Save
     file_name = f"{save_path}/{search_term}_wordcloud.png"
@@ -125,7 +125,7 @@ def cooc_graph(search_term, tweets_dataframe, save_path, NUM_OF_COOCS=5):
     tweets = tweets_dataframe["Tweet"].dropna().values
 
     # Sort out fonts
-    font_files = font_manager.findSystemFonts(fontpaths="/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/Interface/rsc/swiss_911_ultra_compressed_bt.ttf")
+    font_files = font_manager.findSystemFonts(fontpaths="/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/Interface/rsc")
     font_list = font_manager.createFontList(font_files)
     font_manager.fontManager.ttflist.extend(font_list)
 
@@ -195,7 +195,7 @@ def cooc_graph(search_term, tweets_dataframe, save_path, NUM_OF_COOCS=5):
         sizes.append(size)
 
     # Visualisation
-    fig = plt.figure(figsize=(15, 10))
+    fig = plt.figure(figsize=(5, 3), dpi=200)
     pos = nx.spring_layout(G)
     if len(ALL_SEARCH_TERMS) == 1:
         pos = nx.nx_agraph.graphviz_layout(G, prog='twopi')
@@ -213,7 +213,7 @@ def cooc_graph(search_term, tweets_dataframe, save_path, NUM_OF_COOCS=5):
 
     # Save
     file_name = f"{save_path}/{search_term}_coocgraph.png"
-    plt.savefig(file_name, dpi=300, transparent=True)
+    plt.savefig(file_name, transparent=True)
 
 
 def generate_plots(keyword, save_path = "/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/Interface/output"):
