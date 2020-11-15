@@ -62,12 +62,12 @@ for term in TextBlob(search_term).words:
     # Create a structure to hold the node links
     graph_data += [{"from":term.upper(), "to":set_name, "stat":term_dice_stats[set_name]} for set_name in most_similar]
 
-    # Iterate over each of the choseon coocs, and find their closest
+    # Iterate over each of the chosen coocs, and find their closest
     for word in most_similar:
         # Find stats for this word
         word_dice_stats = dice_significance(cooc, word, key_words)
         word_dice_stats = dict_value_sort(word_dice_stats)
-        # Choose top 20 nearby matches
+        # Choose top nearby matches
         top_neighbours = list(word_dice_stats.keys())[0:10]
         new_graph_data = [{"from":word.upper(), "to":set_name, "stat":word_dice_stats[set_name]} for set_name in top_neighbours]
         # Add to existing graph data
@@ -75,7 +75,6 @@ for term in TextBlob(search_term).words:
 
 # Convert graph data to pandas dataframe
 gd = pd.DataFrame.from_dict(graph_data)
-
 # Create co-occurance graph
 # G = nx.from_numpy_matrix(cooc)
 G = nx.from_pandas_edgelist(gd, "from", "to", "stat")
@@ -84,4 +83,9 @@ G = nx.from_pandas_edgelist(gd, "from", "to", "stat")
 # Visualisation
 fig = plt.figure()
 nx.draw_networkx(G, with_labels=True, node_size=100, alpha=0.8, cmap="Blues")
+# Save
+save_name = f"{PROJ_PATH}output/{search_term}_coocgraph.png"
+plt.savefig(save_name, dpi=300)
+
+# Show
 plt.show()
