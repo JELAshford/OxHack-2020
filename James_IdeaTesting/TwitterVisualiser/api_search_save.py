@@ -32,6 +32,8 @@ for tweet in public_tweets:
     twt = re.sub(r"http\S+", "", twt)
     # Remove RT prefix
     twt = re.sub("(RT\s@.*:\s)", "", twt).strip()
+    # Remove twitter handles
+    twt = re.sub("(@.*\s)", "", twt)
     # Correct ampersand
     twt = re.sub("(&amp;)", "&", twt)
     # Replace newlines and underscores
