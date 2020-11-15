@@ -1,6 +1,8 @@
 from collections import Counter
 from textblob import TextBlob
+import matplotlib as mpl
 import matplotlib.pylab as plt
+import matplotlib.font_manager as font_manager
 import pandas as pd
 import numpy as np
 from nltk.corpus import stopwords
@@ -28,6 +30,12 @@ def dice_significance(cooc_array, word, word_list):
 PROJ_PATH = "/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/James_IdeaTesting/TwitterVisualiser/"
 NUM_OF_COOCS = 5
 
+# Sort out fonts
+font_files = font_manager.findSystemFonts(fontpaths=f"{PROJ_PATH}rsc")
+font_list = font_manager.createFontList(font_files)
+font_manager.fontManager.ttflist.extend(font_list)
+mpl.rcParams['font.family'] = 'Silom' #'Swiss911 UCm BT'
+
 # Read in tweets
 search_term = 'Trump'
 tweet_file = pd.read_csv(f"{PROJ_PATH}rsc/{search_term}_tweets.csv")
@@ -50,18 +58,16 @@ dtm = np.array([[1 if (tweet.upper().count(word) > 0) else 0 for word in key_wor
 cooc = np.dot(dtm.T, dtm)
 
 graph_data = []
+tier2_names = []
 for term in TextBlob(search_term).words:
-
     # Statistical significance of search_term
     term_dice_stats = dice_significance(cooc, term, key_words)
     term_dice_stats = dict_value_sort(term_dice_stats)
-
     # Get NUM_OF_COOCS most similar words
     most_similar = list(term_dice_stats.keys())[0:NUM_OF_COOCS]
-
+    tier2_names += most_similar
     # Create a structure to hold the node links
     graph_data += [{"from":term.upper(), "to":set_name, "stat":term_dice_stats[set_name]} for set_name in most_similar]
-
     # Iterate over each of the chosen coocs, and find their closest
     for word in most_similar:
         # Find stats for this word
@@ -78,11 +84,24 @@ gd = pd.DataFrame.from_dict(graph_data)
 # Create co-occurance graph
 # G = nx.from_numpy_matrix(cooc)
 G = nx.from_pandas_edgelist(gd, "from", "to", "stat")
-# pos = nx.spring_layout(G, k=0.42, iterations=17)
+pos = nx.spring_layout(G)
+G_labels = nx.draw_networkx_labels(G, pos, font_family="Swiss911 UCm BT")
+
+# Generate colours
+colours = []
+for node in G:
+    if node in TextBlob(search_term).words.upper():
+        col = 'red'
+    elif node in tier2_names:
+        col = 'orange'
+    else:
+        col = 'blue'
+    colours.append(col)
 
 # Visualisation
 fig = plt.figure()
-nx.draw_networkx(G, with_labels=True, node_size=100, alpha=0.8, cmap="Blues")
+nx.draw_networkx(G, with_labels=True, node_size=100, alpha=0.8, node_color=colours, font_family="Swiss911 UCm BT")
+
 # Save
 save_name = f"{PROJ_PATH}output/{search_term}_coocgraph.png"
 plt.savefig(save_name, dpi=300)
