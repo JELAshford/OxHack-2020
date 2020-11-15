@@ -91,7 +91,7 @@ def wordcloud_plot(search_term, tweets_dataframe, save_path):
     # Create word-cloud
     word_cloud = WordCloud(font_path="/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/Interface/rsc/swiss_911_ultra_compressed_bt.ttf",
                             mode="RGBA", background_color=None, colormap="Blues", 
-                            width=1000, height=630, max_words=2000)
+                            width=1000, height=600, max_words=2000)
     word_cloud.generate(tweet_str)
     # Save
     file_name = f"{save_path}/{search_term}_wordcloud.png"
@@ -130,7 +130,7 @@ def cooc_graph(search_term, tweets_dataframe, save_path, NUM_OF_COOCS=5):
     font_manager.fontManager.ttflist.extend(font_list)
 
     # Extract and clean words
-    all_words = TextBlob(" ".join(tweets).upper()).words.singularize().lemmatize()
+    all_words = TextBlob(" ".join(tweets).upper()).words.lemmatize()
     # Get stop-words
     stop_words = list(set(stopwords.words('english'))) + ['thi']
     # Remove Stop and Short Words
@@ -181,15 +181,15 @@ def cooc_graph(search_term, tweets_dataframe, save_path, NUM_OF_COOCS=5):
     for node in G:
         if node in ALL_SEARCH_TERMS.upper():
             col = 'darkblue' #'red'
-            size = counts[node]*1000 #5000
+            size = counts[node]*100 #5000
             l0[node] = node
         elif node in layer1_names:
             col = 'lightblue' #'orange'
-            size = counts[node]*1000 #2500
+            size = counts[node]*100 #2500
             l1[node] = node
         else:
             col = 'cyan' #'blue'
-            size = counts[node]*100 #1000
+            size = counts[node]*10 #1000
             l2[node] = node
         colours.append(col)
         sizes.append(size)
@@ -200,16 +200,16 @@ def cooc_graph(search_term, tweets_dataframe, save_path, NUM_OF_COOCS=5):
     if len(ALL_SEARCH_TERMS) == 1:
         pos = nx.nx_agraph.graphviz_layout(G, prog='twopi')
     # Draw edges
-    edges = nx.draw_networkx_edges(G, pos, alpha=1, width=2, edge_color='white') #width=gd["stat"].values*10)
+    edges = nx.draw_networkx_edges(G, pos, alpha=1, width=1, edge_color='white') #width=gd["stat"].values*10)
     # Draw nodes, once white for background then again with colour+alpha
     nodes = nx.draw_networkx_nodes(G, pos, alpha=1, node_color='white', node_size=sizes)
     nodes = nx.draw_networkx_nodes(G, pos, alpha=0.8, node_color=colours, node_size=sizes)
     nodes.set_edgecolor('black')
     # Draw labels for each layer, with proportional sizes
-    labels0 = nx.draw_networkx_labels(G, pos, labels=l0, font_family="Swiss911 UCm BT", font_size=60)
-    labels1 = nx.draw_networkx_labels(G, pos, labels=l1, font_family="Swiss911 UCm BT", font_size=30)
-    labels2 = nx.draw_networkx_labels(G, pos, labels=l2, font_family="Swiss911 UCm BT", font_size=22, font_color="white")
-    labels2 = nx.draw_networkx_labels(G, pos, labels=l2, font_family="Swiss911 UCm BT", font_size=21, font_color="black")
+    labels0 = nx.draw_networkx_labels(G, pos, labels=l0, font_family="Swiss911 UCm BT", font_size=30)
+    labels1 = nx.draw_networkx_labels(G, pos, labels=l1, font_family="Swiss911 UCm BT", font_size=15)
+    labels2 = nx.draw_networkx_labels(G, pos, labels=l2, font_family="Swiss911 UCm BT", font_size=11, font_color="white")
+    labels2 = nx.draw_networkx_labels(G, pos, labels=l2, font_family="Swiss911 UCm BT", font_size=10, font_color="black")
 
     # Save
     file_name = f"{save_path}/{search_term}_coocgraph.png"

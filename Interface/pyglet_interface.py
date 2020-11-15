@@ -18,11 +18,12 @@ class Region:
         else:
             return False
 
+global ACTIVE_WORD, main_display
+
 INTERFACE_PATH = "/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/Interface"
 RSC_PATH = f"{INTERFACE_PATH}/rsc"
 OUTPUT_PATH = f"{INTERFACE_PATH}/output"
 WIDTH, HEIGHT = 1440, 898
-global ACTIVE_WORD
 ACTIVE_WORD = "ENTER QUERY"
 
 # Load in font
@@ -40,23 +41,29 @@ search_word = pyglet.text.Label(ACTIVE_WORD,
                           x=860, y=620, width=580, height=270,
                           anchor_x='left', anchor_y='bottom')
 
-main_display = pyglet.image.load(f"{OUTPUT_PATH}/")
+main_display = pyglet.image.load(f"{RSC_PATH}/standby.png")
+main_display.anchor_x = 0; main_display.anchor_y = 0
 
 @window.event
 def on_draw():
     window.clear()
     background.blit(0, 0)
+    main_display.blit(200, 80)
     search_word.draw()
 
 @window.event
 def on_mouse_press(x, y, button, modifiers):
-    global ACTIVE_WORD
+    global ACTIVE_WORD, main_display
     if button == mouse.LEFT:
         print(f'The left mouse button was pressed at x:{x}, y:{y}')
         # Test if generate_button pressed
         if generate_button.in_region(x, y):
             print(f'Generate a Twitter Profile for "{ACTIVE_WORD}"')
             generate_plots(ACTIVE_WORD)
+
+            # Update main plot with the 
+            main_display = pyglet.image.load(f"{OUTPUT_PATH}/{ACTIVE_WORD}_coocgraph.png")
+            main_display.anchor_x = 0; main_display.anchor_y = 0
 
 @window.event
 def on_key_press(symbol, modifiers):
