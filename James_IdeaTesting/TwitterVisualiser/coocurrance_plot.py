@@ -107,7 +107,7 @@ nx.draw_networkx_labels(G, pos, font_family="Swiss911 UCm BT", font_size=18)
 
 # Save
 save_name = f"{PROJ_PATH}output/{search_term}_coocgraph.png"
-plt.savefig(save_name, dpi=300)
+plt.savefig(save_name, dpi=300, transparent=True)
 
 # Show
 plt.show()
