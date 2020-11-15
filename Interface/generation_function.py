@@ -125,7 +125,7 @@ def cooc_graph(search_term, tweets_dataframe, save_path, NUM_OF_COOCS=5):
     tweets = tweets_dataframe["Tweet"].dropna().values
 
     # Sort out fonts
-    font_files = font_manager.findSystemFonts(fontpaths=f"{PROJ_PATH}rsc")
+    font_files = font_manager.findSystemFonts(fontpaths="/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/Interface/rsc/swiss_911_ultra_compressed_bt.ttf")
     font_list = font_manager.createFontList(font_files)
     font_manager.fontManager.ttflist.extend(font_list)
 

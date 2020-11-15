@@ -38,7 +38,6 @@ search_word = pyglet.text.Label(ACTIVE_WORD,
                           x=860, y=620, width=580, height=270,
                           anchor_x='left', anchor_y='bottom')
 
-
 @window.event
 def on_draw():
     window.clear()
@@ -71,7 +70,7 @@ def on_key_press(symbol, modifiers):
     # Allow letter key presses
     else:
         new_button = str(key.symbol_string(symbol))
-        if new_button in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
+        if new_button in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789':
             ACTIVE_WORD += new_button
 
     # Update label text
