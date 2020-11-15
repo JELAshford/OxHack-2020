@@ -20,7 +20,7 @@ auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
 # Make public search
-search_term = 'Climate Change'
+search_term = 'Trump'
 public_tweets = api.search(search_term, count=100, result_type='recent')
 
 # Generate list of tuples: (tweet, polarity, subjectivity)

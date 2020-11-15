@@ -28,16 +28,15 @@ def dice_significance(cooc_array, word, word_list):
 
 # Define project path
 PROJ_PATH = "/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/James_IdeaTesting/TwitterVisualiser/"
-NUM_OF_COOCS = 5
+NUM_OF_COOCS = 10
 
 # Sort out fonts
 font_files = font_manager.findSystemFonts(fontpaths=f"{PROJ_PATH}rsc")
 font_list = font_manager.createFontList(font_files)
 font_manager.fontManager.ttflist.extend(font_list)
-mpl.rcParams['font.family'] = 'Silom' #'Swiss911 UCm BT'
 
 # Read in tweets
-search_term = 'Trump'
+search_term = 'Climate Change'
 tweet_file = pd.read_csv(f"{PROJ_PATH}rsc/{search_term}_tweets.csv")
 tweets = tweet_file["Tweet"].dropna().values
 
@@ -84,8 +83,7 @@ gd = pd.DataFrame.from_dict(graph_data)
 # Create co-occurance graph
 # G = nx.from_numpy_matrix(cooc)
 G = nx.from_pandas_edgelist(gd, "from", "to", "stat")
-pos = nx.spring_layout(G)
-G_labels = nx.draw_networkx_labels(G, pos, font_family="Swiss911 UCm BT")
+pos = nx.nx_agraph.graphviz_layout(G, prog='twopi')
 
 # Generate colours
 colours = []
@@ -100,7 +98,7 @@ for node in G:
 
 # Visualisation
 fig = plt.figure()
-nx.draw_networkx(G, with_labels=True, node_size=100, alpha=0.8, node_color=colours, font_family="Swiss911 UCm BT")
+nx.draw_networkx(G, pos, with_labels=True, node_size=100, alpha=1, node_color=colours, font_family="Swiss911 UCm BT", font_size=18, font_weight='bold')
 
 # Save
 save_name = f"{PROJ_PATH}output/{search_term}_coocgraph.png"
