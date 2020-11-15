@@ -83,22 +83,27 @@ gd = pd.DataFrame.from_dict(graph_data)
 # Create co-occurance graph
 # G = nx.from_numpy_matrix(cooc)
 G = nx.from_pandas_edgelist(gd, "from", "to", "stat")
-pos = nx.nx_agraph.graphviz_layout(G, prog='twopi')
+pos = nx.nx_agraph.graphviz_layout(G, prog='fdp')
 
 # Generate colours
-colours = []
+colours, sizes = [], []
 for node in G:
     if node in TextBlob(search_term).words.upper():
         col = 'red'
+        size = 2000
     elif node in tier2_names:
         col = 'orange'
+        size = 500
     else:
         col = 'blue'
+        size = 100
     colours.append(col)
+    sizes.append(size)
 
 # Visualisation
-fig = plt.figure()
-nx.draw_networkx(G, pos, with_labels=True, node_size=100, alpha=1, node_color=colours, font_family="Swiss911 UCm BT", font_size=18, font_weight='bold')
+fig = plt.figure(figsize=(15, 10))
+nx.draw_networkx(G, pos, with_labels=True, alpha=0.5, node_color=colours, node_size = sizes, font_family="Swiss911 UCm BT", font_size=18)
+nx.draw_networkx_labels(G, pos, font_family="Swiss911 UCm BT", font_size=18)
 
 # Save
 save_name = f"{PROJ_PATH}output/{search_term}_coocgraph.png"
