@@ -1,6 +1,7 @@
 from nltk.corpus import stopwords
 
 import matplotlib.pylab as plt
+import matplotlib.font_manager as font_manager
 
 from wordcloud import wordcloud
 from wordcloud.wordcloud import WordCloud
@@ -67,13 +68,13 @@ def generate_csv(keyword, save_path):
     # Convert to pandas dataframe and save
     file_path = f"{save_path}/{keyword}_tweets.csv"
     saved_tweets = pd.DataFrame(tweet_data)
-    saved_tweets.to_csv(file_path, header=["Tweet", "Polarity", "Subjectivity"], index=False)
+    saved_tweets.columns = ["Tweet", "Polarity", "Subjectivity"]
+    saved_tweets.to_csv(file_path, header=True, index=False)
 
     return saved_tweets
 
 
 def wordcloud_plot(search_term, tweets_dataframe, save_path):
-    print(tweets_dataframe)
 
     tweets = tweets_dataframe["Tweet"].dropna().values
 
@@ -122,6 +123,11 @@ def cooc_graph(search_term, tweets_dataframe, save_path, NUM_OF_COOCS=5):
     ALL_SEARCH_TERMS = TextBlob(search_term).words
     
     tweets = tweets_dataframe["Tweet"].dropna().values
+
+    # Sort out fonts
+    font_files = font_manager.findSystemFonts(fontpaths=f"{PROJ_PATH}rsc")
+    font_list = font_manager.createFontList(font_files)
+    font_manager.fontManager.ttflist.extend(font_list)
 
     # Extract and clean words
     all_words = TextBlob(" ".join(tweets).upper()).words.singularize().lemmatize()
