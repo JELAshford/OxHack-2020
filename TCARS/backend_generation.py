@@ -110,7 +110,7 @@ def wordcloud_plot(search_term, tweets_dataframe, save_path):
     tweet_str = " ".join(words)
 
     # Create word-cloud
-    word_cloud = WordCloud(font_path="/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/Interface/rsc/swiss_911_ultra_compressed_bt.ttf",
+    word_cloud = WordCloud(font_path="/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/TCARS/rsc/swiss_911_ultra_compressed_bt.ttf",
                             mode="RGBA", background_color=None, colormap="Blues", 
                             width=1000, height=600, max_words=2000)
     word_cloud.generate(tweet_str)
@@ -146,7 +146,7 @@ def cooc_graph(search_term, tweets_dataframe, save_path, NUM_OF_COOCS=5):
     tweets = tweets_dataframe["Tweet"].dropna().values
 
     # Sort out fonts
-    font_files = font_manager.findSystemFonts(fontpaths="/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/Interface/rsc")
+    font_files = font_manager.findSystemFonts(fontpaths="/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/TCARS/rsc")
     font_list = font_manager.createFontList(font_files)
     font_manager.fontManager.ttflist.extend(font_list)
 
@@ -240,7 +240,7 @@ def cooc_graph(search_term, tweets_dataframe, save_path, NUM_OF_COOCS=5):
 def ps_graph(search_term, tweets_dataframe, save_path):
 
     # Sort out fonts
-    font_files = font_manager.findSystemFonts(fontpaths="/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/Interface/rsc")
+    font_files = font_manager.findSystemFonts(fontpaths="/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/TCARS/rsc")
     font_list = font_manager.createFontList(font_files)
     font_manager.fontManager.ttflist.extend(font_list)
     from matplotlib import rcParams
@@ -283,7 +283,7 @@ def ps_graph(search_term, tweets_dataframe, save_path):
 
     return True
 
-def generate_plots(keyword, save_path = "/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/Interface/output"):
+def generate_plots(keyword, save_path = "/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/TCARS/output"):
 
     # Generate .csv of tweet data from keyword
     tweet_df = generate_csv(keyword, save_path)

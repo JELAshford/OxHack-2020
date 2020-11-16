@@ -3,7 +3,7 @@ from pyglet import font
 from pyglet.window import mouse
 from pyglet.window import key
 from dataclasses import dataclass
-from generation_function import generate_plots
+from backend_generation import generate_plots
 
 @dataclass
 class Region:
@@ -20,7 +20,7 @@ class Region:
 
 global ACTIVE_WORD, VIEW_DICT, VIEW_MODE, main_display
 
-INTERFACE_PATH = "/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/Interface"
+INTERFACE_PATH = "/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/TCARS"
 RSC_PATH = f"{INTERFACE_PATH}/rsc"
 OUTPUT_PATH = f"{INTERFACE_PATH}/output"
 WIDTH, HEIGHT = 1440, 898
