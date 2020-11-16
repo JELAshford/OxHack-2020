@@ -283,6 +283,7 @@ def ps_graph(search_term, tweets_dataframe, save_path):
 
     return True
 
+
 def generate_plots(keyword, save_path = "/Users/jamesashford/Documents/Projects/Hackathons/Oxford Hack 2020/OxHack-2020/TCARS/output"):
 
     # Generate .csv of tweet data from keyword
