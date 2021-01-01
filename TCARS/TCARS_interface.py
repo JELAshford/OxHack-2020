@@ -143,7 +143,9 @@ def on_key_press(symbol, modifiers):
     # Allow letter key presses
     else:
         new_button = str(key.symbol_string(symbol))
-        if new_button in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789':
+        if new_button in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_0_1_2_3_4_5_6_7_8_9':
+            # Remove _ from numbers
+            new_button = new_button.strip("_")
             ACTIVE_WORD += new_button
 
     # Update label text
